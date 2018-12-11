@@ -35,6 +35,12 @@ module.exports = function (options) {
             commonjs: 'lodash',
             commonjs2: 'lodash',
             amd:'lodash'
+        },
+        'libphonenumber-js':{
+            root: 'libphonenumber',
+            commonjs: 'libphonenumber-js',
+            commonjs2: 'libphonenumber-js',
+            amd:'libphonenumber-js'
         }
     }
 };

@@ -47,7 +47,7 @@ try{
     };
 
     let phoneValidator = new validationUtils.common.PhoneValidator({
-        region: 'UA'
+        regions: ['UA','US']
     });
     phoneValidator._getErrMsg = function () {
         return `Phone number is invalid! Please enter valid phone number for region "${this.region}"`;
@@ -73,7 +73,8 @@ try{
             validator: phoneValidator,
             data: [
                 '+380674753812',//valid UA phone
-                '+15417543010',//phone itself is valid, but for US region. Invalid for UA
+                '+15417543010',//valid US code
+                '+79225551234',//phone itself is valid, but region is RU
                 '123'//not a phone number at all
             ]
         },
