@@ -58,7 +58,7 @@ try{
         return 'Email is invalid !';
     };
     /*==================Multiple validators combination==================*/
-    let githubUserRegistrationValidator = new BatchValidator({
+    let githubUserRegistrationValidator = new validationUtils.common.BatchValidator({
         validators:[
             lengthValidator,
             githubUsernameIsAvailableValidator
