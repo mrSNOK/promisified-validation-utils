@@ -1,8 +1,8 @@
 {
-  "name": "promisified-validator",
+  "name": "promisified-validation-utils",
   "version": "1.0.0",
   "description": "starter module for bootstrap-based landing page",
-  "main": "build/promisified-validator.min.js",
+  "main": "build/promisified-validation-utils.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-lib-dev": "webpack --mode=development --env.target=library",

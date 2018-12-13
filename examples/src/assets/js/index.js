@@ -1,6 +1,6 @@
 import "../style/common-styles.scss";
 import "bootstrap";
-import validationUtils from "/../promisified-validation-utils";
+import validationUtils from "../../../../../promisified-validation-utils";
 
 console.log('examples scripts are loaded!');
 
