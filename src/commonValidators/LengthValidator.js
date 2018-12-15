@@ -1,14 +1,16 @@
 var AbstractValidator = require('../AbstractValidator');
 
 function LengthValidator(options) {
-    this.minLength = options.minLength || -Infinity;
-    this.maxLength = options.maxLength || Infinity;
+    AbstractValidator.apply(this, arguments);
 }
 LengthValidator.prototype = Object.create(AbstractValidator.prototype);
 LengthValidator.prototype.constructor = LengthValidator;
 
-LengthValidator.prototype._rule = function(val){
-    var length = val.toString().length;
-    return length >= this.minLength && length <= this.maxLength;
+LengthValidator.prototype._rule = function(options){
+    options.minLength = options.minLength || 0;
+    options.maxLength = options.maxLength || Infinity;
+    var length = options.value.toString().length;
+    options.isValid = length >= options.minLength && length <= options.maxLength;
+    return options;
 };
 module.exports = LengthValidator;

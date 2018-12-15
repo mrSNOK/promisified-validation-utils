@@ -2,23 +2,21 @@ var AbstractValidator = require('../AbstractValidator');
 var libphonenumber = require('libphonenumber-js');
 
 function PhoneValidator(options) {
-    this.constraintRegions = options.regions || [];
+    AbstractValidator.apply(this,arguments);
 }
 PhoneValidator.prototype = Object.create(AbstractValidator.prototype);
 PhoneValidator.prototype.constructor = PhoneValidator;
 
-PhoneValidator.prototype._rule = function(val){
+PhoneValidator.prototype._rule = function(options){
+    options.constraintRegions = options.constraintRegions || [] ;
     try{
-        var phoneNumber = libphonenumber.parseNumber(val); //throws error if cant parse
+        var phoneNumber = libphonenumber.parsePhoneNumber(options.value); //throws error if cant parse
         if (phoneNumber.isValid()){
-            if (this.constraintRegions.length === 0){
-                return true; //if there are no constraints
-            }else {
-                return this.constraintRegions.indexOf(libphonenumber.country) > -1 //phone number is in list of constraints
-            }
-        }else return false;
+            options.isValid = options.constraintRegions.length === 0 || options.constraintRegions.indexOf(phoneNumber.country) > -1 ;//phone number is in list of constraints
+        }else options.isValid = false;
     }catch (err){
-        return false; // Not a phone number, non-existent country, etc.
+        options.isValid = false; // Not a phone number, non-existent country, etc.
     }
+    return options;
 };
 module.exports = PhoneValidator;

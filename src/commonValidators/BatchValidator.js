@@ -3,29 +3,29 @@ var AbstractValidator = require('../AbstractValidator');
 function BatchValidator(options) {
     if (!(options && options.validators && options.validators.length > 0))
         throw new Error('Cant instantiate class without at least one validator !');
-    this.validators = options.validators;
-    this.validatorErrors = [];
+    AbstractValidator.apply(this, arguments);
 }
 BatchValidator.prototype = Object.create(AbstractValidator.prototype);
 BatchValidator.prototype.constructor = BatchValidator;
 
-BatchValidator.prototype._rule = function(val){
-    var validatorsPromises = this.validators.map(function (validator) {
-        return validator.validate(val);
+BatchValidator.prototype._rule = function(options){
+    var validatorsPromises = options.validators.map(function (validator) {
+        return validator.validate(options.value);
     });
     return Promise.all(validatorsPromises)
         .then(function (validationResults) {
-           var isAllValid = true;
+           options.isValid = true;
+           options.validatorErrors = [];
            validationResults.forEach(function (result) {
-               isAllValid = isAllValid && result.isValid;
-               this.validatorErrors = this.validatorErrors.concat(result.errMsgs);
+               options.isValid = options.isValid && result.isValid;
+               options.validatorErrors = options.validatorErrors.concat(result.errMsgs);
            });
-           return isAllValid;
+           return options;
         });
 };
-BatchValidator.prototype._getValidationResults = function (isValid) {
-    var result = AbstractValidator.prototype._getValidationResults.call(this, isValid);
-    result.errMsgs = result.errMsgs.concat(this.validatorErrors);
+BatchValidator.prototype._getValidationResults = function (options) {
+    var result = AbstractValidator.prototype._getValidationResults(options);
+    result.errMsgs = result.errMsgs.concat(options.validatorErrors);
     return result;
 };
 

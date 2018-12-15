@@ -1,26 +1,29 @@
-function AbstractValidator() {
+function AbstractValidator(options) {
     if (this.constructor === AbstractValidator)
         throw new Error("Can't instantiate abstract class !");
+    if (options.getErrMsg === 'undefined' || typeof options.getErrMsg !== 'function')
+        throw new Error("options should contain getErrMsg method !");
+    this.options = options;
 }
-AbstractValidator.prototype._rule = function (val) {
-  throw new Error("Please implement abstract protected method! It should return boolean or Promise that resolves with boolean");
+AbstractValidator.prototype._rule = function (options) {
+  throw new Error("Please implement abstract protected method! It should set isValid: boolean to received options object and return it !");
 };
-AbstractValidator.prototype._getErrMsg = function () {
-  throw new Error("Please implement abstract protected method! It should return String");
-};
-AbstractValidator.prototype._getValidationResults = function (isValid) {
+AbstractValidator.prototype._getValidationResults = function (options) {
+    if (options.isValid === 'undefined')
+        throw new Error("_rule method should return object, containing isValid: boolean !");
     var errMsgs = [];
-    if (!isValid)
-        errMsgs.push(this._getErrMsg());
+    if (!options.isValid)
+        errMsgs.push(options.getErrMsg());
     return {
-        value: this._value,
-        isValid:isValid,
+        value: options.value,
+        isValid:options.isValid,
         errMsgs: errMsgs
     };
 };
 AbstractValidator.prototype.validate = function(val){
-    this._value = val;
-    return Promise.resolve(val)
+    var optionsSnapshot = Object.assign({},this.options); // taking options snapshot as options can be changed, and multiple validations can be started synchronously. Each async validation has its own data safe in closure
+    optionsSnapshot.value = val;
+    return Promise.resolve(optionsSnapshot)
         .then(this._rule)
         .then(this._getValidationResults);
 };
